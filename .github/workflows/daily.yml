@@ -1,0 +1,19 @@
+name: 半导体日报
+
+on:
+  schedule:
+    # 每天 23:00 UTC = 翌朝 8:00 JST（日～木 = JST 月～金）
+    - cron: '0 23 * * 0-4'
+  workflow_dispatch:  # 允许手动触发测试
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 发送半导体日报
+        env:
+          FTQQ_SENDKEY: ${{ secrets.FTQQ_SENDKEY }}
+        run: python daily_report.py
