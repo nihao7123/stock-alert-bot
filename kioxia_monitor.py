@@ -52,7 +52,7 @@ def main():
         print("正常范围，无需预警。")
         sys.exit(0)
 
-    sendkey = os.environ["FTQQ_SENDKEY"]
+    sendkey = os.environ["FTQQ_SENDKEY"].strip().lstrip('﻿')
     level   = "🔴" if abs(change) >= 7 else "🟡"
     sign    = "+" if change > 0 else ""
     word    = "急涨" if change > 0 else "急跌"

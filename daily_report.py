@@ -50,7 +50,7 @@ def send_wechat(sendkey, title, body):
         return json.loads(r.read())
 
 def main():
-    sendkey = os.environ["FTQQ_SENDKEY"]
+    sendkey = os.environ["FTQQ_SENDKEY"].strip().lstrip('﻿')
     today   = datetime.date.today().strftime("%Y-%m-%d")
     now     = (datetime.datetime.utcnow() + datetime.timedelta(hours=9)).strftime("%H:%M JST")
 
