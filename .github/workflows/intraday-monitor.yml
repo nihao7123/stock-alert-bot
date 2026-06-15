@@ -1,10 +1,9 @@
-name: 铠侠盘中监控
+name: intraday-monitor
 
 on:
   schedule:
-    # 每5分钟执行一次，UTC 0:00-6:55 = JST 9:00-15:55（工作日）
     - cron: '*/5 0-6 * * 1-5'
-  workflow_dispatch:  # 允许手动触发测试
+  workflow_dispatch:
 
 jobs:
   monitor:
@@ -12,8 +11,7 @@ jobs:
     timeout-minutes: 3
     steps:
       - uses: actions/checkout@v4
-
-      - name: 检查铠侠(285A)股价
+      - name: run intraday monitor
         env:
           FTQQ_SENDKEY: ${{ secrets.FTQQ_SENDKEY }}
         run: python kioxia_monitor.py
