@@ -20,7 +20,7 @@ def fetch_price():
         meta = json.loads(r.read())["chart"]["result"][0]["meta"]
     return (
         meta["regularMarketPrice"],
-        meta["regularMarketOpen"],
+        meta["chartPreviousClose"],   # 昨日収盤価→官方涨跌幅基准
         meta["regularMarketDayHigh"],
         meta["regularMarketDayLow"],
     )
@@ -46,7 +46,7 @@ def main():
         sys.exit(1)
 
     change = (price - open_p) / open_p * 100
-    print(f"285A ¥{price:,} | 开盘 ¥{open_p:,} | 涨跌 {change:+.2f}%")
+    print(f"285A ¥{price:,} | 昨收 ¥{open_p:,} | 涨跌 {change:+.2f}%")
 
     if abs(change) < 4.0:
         print("正常范围，无需预警。")
@@ -70,10 +70,10 @@ def main():
 {now:%Y-%m-%d %H:%M} JST
 
 当前价格：¥{price:,}
-今日开盘：¥{open_p:,}
+昨日收盘：¥{open_p:,}
 今日最高：¥{high:,}
 今日最低：¥{low:,}
-**涨跌幅：{sign}{change:.2f}%**
+**涨跌幅（vs昨收）：{sign}{change:.2f}%**
 
 ---
 
