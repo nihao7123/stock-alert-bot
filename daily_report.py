@@ -10,10 +10,16 @@ def fetch_yahoo(symbol):
     with urllib.request.urlopen(req, timeout=15) as r:
         data = json.loads(r.read())
     meta = data["chart"]["result"][0]["meta"]
+    price = meta.get("regularMarketPrice", 0)
+    # 注意：Yahoo 的 chart meta 里没有 regularMarketChangePercent 字段，
+    # 直接 .get 永远拿到默认值 0 —— 这就是早报涨幅一直显示 0% 的原因。
+    # 正确做法：用 现价 ÷ 昨收 自己算。
+    prev = meta.get("previousClose") or meta.get("chartPreviousClose") or 0
+    change_pct = (price - prev) / prev * 100 if prev else 0
     return {
-        "price":      meta.get("regularMarketPrice", 0),
-        "prev_close": meta.get("chartPreviousClose", 0),
-        "change_pct": meta.get("regularMarketChangePercent", 0),
+        "price":      price,
+        "prev_close": prev,
+        "change_pct": change_pct,
     }
 
 def assess_level(soxx_pct, nvda_pct):
@@ -109,6 +115,7 @@ def main():
 - 其他 → 🟢 稳定
 
 ---
+⚠️ 自动播报，数据来自 Yahoo Finance，仅供参考，不构成投资建议。
 GitHub Actions 云端自动运行 · {today} 08:00 JST"""
 
     result = send_wechat(sendkey, title, body)
