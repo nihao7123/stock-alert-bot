@@ -1,0 +1,23 @@
+name: us-close-radar
+
+# 美股收盘后扫描：每个 JST 工作日早上 08:00（= UTC 23:00 周日~周四）
+# 取最新美股收盘数据，周一早晨用上周五收盘。
+on:
+  schedule:
+    - cron: '0 23 * * 0-4'
+  workflow_dispatch:
+
+jobs:
+  radar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: run radar (US close session)
+        env:
+          FTQQ_SENDKEY: ${{ secrets.FTQQ_SENDKEY }}
+          SESSION: 美股收盘后
+        run: python screener.py

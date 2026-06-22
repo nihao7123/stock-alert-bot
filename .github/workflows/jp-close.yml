@@ -1,0 +1,22 @@
+name: jp-close-radar
+
+# 日股收盘后扫描：每个 JST 工作日 16:00（= UTC 07:00 周一~周五，东京 15:00 收盘后）
+on:
+  schedule:
+    - cron: '0 7 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  radar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: run radar (JP close session)
+        env:
+          FTQQ_SENDKEY: ${{ secrets.FTQQ_SENDKEY }}
+          SESSION: 日股收盘后
+        run: python screener.py
